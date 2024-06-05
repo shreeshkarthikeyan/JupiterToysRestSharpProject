@@ -2,19 +2,24 @@
 using JupiterToysRestSharpProject.Support;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NUnit.Framework;
 using RestSharp;
 using RestSharp.Authenticators.OAuth2;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Net;
 using System.Security.Policy;
 
 namespace JupiterToysRestSharpProject.API
 {
-    public class BaseAPI<T> where T : class
+    public class BaseAPI<T>
     {
         public string accessToken;
-        public BaseAPI() {
-            GetAccessToken();
+        Token token;
+        public BaseAPI(Token token) {
+            this.token = token;
+            accessToken = token.GetAccessToken();
         }
 
         public enum Request {
@@ -22,8 +27,7 @@ namespace JupiterToysRestSharpProject.API
         }
 
         public RestClient SetUrl(string url) {
-
-            ArgumentNullException.ThrowIfNull(url);
+            ExceptionHandler.CheckNullArgument(new List<dynamic> { url });
             var authenticator = new OAuth2AuthorizationRequestHeaderAuthenticator(
                 accessToken, "Bearer"
             );
@@ -37,9 +41,7 @@ namespace JupiterToysRestSharpProject.API
         }
         
         public RestRequest RequestOperation<T>(Request operation, string endpoint, T payload, Dictionary<string, string> headers) where T: notnull {
-            
-            ArgumentNullException.ThrowIfNull(operation);
-            ArgumentNullException.ThrowIfNull(endpoint);
+            ExceptionHandler.CheckNullArgument(arguments: new List<dynamic> { operation, endpoint });
             RestRequest restRequest = operation switch
             {
                 Request.GET => new RestRequest(endpoint, Method.Get),
@@ -56,14 +58,12 @@ namespace JupiterToysRestSharpProject.API
         }
 
         public RestResponse GetResponse(RestClient restClient, RestRequest restRequest) {
-            ArgumentNullException.ThrowIfNull(restClient);
-            ArgumentNullException.ThrowIfNull(restRequest);
+            ExceptionHandler.CheckNullArgument(new List<dynamic> { restClient, restRequest });
             return restClient.ExecuteAsync(restRequest).Result;
         }
 
         public string GetContent(RestResponse restResponse) {
-
-            ArgumentNullException.ThrowIfNull(restResponse);
+            ExceptionHandler.CheckNullArgument(new List<dynamic> { restResponse });
             if (restResponse.StatusCode == HttpStatusCode.BadRequest)
                 throw new Exception("Could not fetch the right response");
 
@@ -71,32 +71,13 @@ namespace JupiterToysRestSharpProject.API
         }
 
         public List<T> GetContent<T>(RestResponse restResponse) {
-            ArgumentNullException.ThrowIfNull(restResponse);
-            /*HttpStatusCode statusCode = restResponse.StatusCode;
-            int numericStatusCode = (int)statusCode;
-            Console.WriteLine($"Status Code: {numericStatusCode}");*/
-
+            ExceptionHandler.CheckNullArgument(new List<dynamic> { restResponse });
             if (restResponse.StatusCode == HttpStatusCode.BadRequest)
                 throw new Exception("Could not fetch the right response");
 
             var content = restResponse.Content;
             List<T> dtoObjects = JsonConvert.DeserializeObject<List<T>>(content);
             return dtoObjects;
-        }
-        public void GetAccessToken()
-        {
-            var client = new RestClient(Config.readFromPropertiesFile("tokenurl"));
-            var request = new RestRequest("", Method.Post);
-            request.AddParameter("grant_type", Config.readFromPropertiesFile("grant_type"));
-            request.AddParameter("client_id", Config.readFromPropertiesFile("client_id"));
-            request.AddParameter("client_secret", Config.readFromPropertiesFile("client_secret"));
-            request.AddParameter("scope", Config.readFromPropertiesFile("scope"));
-            request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-            RestResponse response = client.Post(request);
-            var content = response.Content;
-            dynamic data = JObject.Parse(content);
-            Console.WriteLine(data.access_token);
-            accessToken = data.access_token;
         }
     }
 

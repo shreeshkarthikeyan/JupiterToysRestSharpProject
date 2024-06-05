@@ -5,6 +5,7 @@ using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,9 +13,10 @@ namespace JupiterToysRestSharpProject.API
 {
     public class UserAPI : BaseAPI<Customer>
     {
-        public string performCreateUserOperation(Customer customer)
-        {
-            ArgumentNullException.ThrowIfNull(customer);
+        public UserAPI(Token token) : base(token) { }
+
+        public string performCreateUserOperation(Customer customer) {
+            ExceptionHandler.CheckNullArgument(new List<dynamic> { customer });
             var restClient = SetUrl(Config.readFromPropertiesFile("customerbaseurl"));
             var restRequest = RequestOperation<Customer>(operation: Request.POST, endpoint: "/customer", payload: customer, headers: null);
             var restResponse = GetResponse(restClient, restRequest);
@@ -24,10 +26,8 @@ namespace JupiterToysRestSharpProject.API
             return data.id;
         }
 
-        public List<string> addToysToCartOperation(String customerId, TransactionHistory toysAddToCart)
-        {
-            ArgumentNullException.ThrowIfNull(customerId);
-            ArgumentNullException.ThrowIfNull(toysAddToCart);
+        public List<string> addToysToCartOperation(String customerId, TransactionHistory toysAddToCart) {
+            ExceptionHandler.CheckNullArgument(new List<dynamic> { customerId, toysAddToCart });
             var restClient = SetUrl(Config.readFromPropertiesFile("customerbaseurl"));
             var restRequest = RequestOperation<TransactionHistory>(operation: Request.PUT, endpoint: $"/customer/{customerId}/purchase", payload: toysAddToCart, headers: null);
             var restResponse = GetResponse(restClient, restRequest);
@@ -39,11 +39,8 @@ namespace JupiterToysRestSharpProject.API
                                       $"Order Number -> {data.order_number}" };
         }
 
-        public void updatePaymentStatus(String transactionId, TransactionHistory paymentStatusUpdate)
-        {
-            ArgumentNullException.ThrowIfNull(transactionId);
-            ArgumentNullException.ThrowIfNull(paymentStatusUpdate);
-
+        public void updatePaymentStatus(String transactionId, TransactionHistory paymentStatusUpdate) {
+            ExceptionHandler.CheckNullArgument(new List<dynamic> { transactionId, paymentStatusUpdate });
             var restClient = SetUrl(Config.readFromPropertiesFile("customerbaseurl"));
             var restRequest = RequestOperation<TransactionHistory>(operation: Request.PATCH, endpoint: $"/transaction/{transactionId}", payload: paymentStatusUpdate, headers: null);
             var restResponse = GetResponse(restClient, restRequest);

@@ -6,9 +6,10 @@ namespace JupiterToysRestSharpProject.API
 {
     public class ToyAPI : BaseAPI<Toy> 
     {
-        public string PerformCreateToyOperation(Toy toy)
-        {
-            ArgumentNullException.ThrowIfNull(toy);
+        public ToyAPI(Token token) : base(token){ }
+
+        public string PerformCreateToyOperation(Toy toy) {
+            ExceptionHandler.CheckNullArgument(new List<dynamic> { toy });
             var restClient = SetUrl(Config.readFromPropertiesFile("baseurl"));
             var restRequest = RequestOperation<Toy>(Request.POST, "/toy", toy, null);
             var restResponse = GetResponse(restClient, restRequest);
@@ -17,14 +18,8 @@ namespace JupiterToysRestSharpProject.API
             Console.WriteLine($"Toy Id --> {data.id}");
             return data.id;
         }
-
-        public Toy PerformGetToyOperation(string toyId)
-        {
-            ArgumentNullException.ThrowIfNull(toyId);
-            /*var headers = new Dictionary<string, string>
-            {
-                {"Accept","application/hal+json"}
-            };*/
+        public Toy PerformGetToyOperation(string toyId) {
+            ExceptionHandler.CheckNullArgument(new List<dynamic> { toyId });
             var restClient = SetUrl(Config.readFromPropertiesFile("baseurl"));
             var restRequest = RequestOperation<Toy>(Request.GET, $"/toy", null, null);
             var restResponse = GetResponse(restClient, restRequest);
@@ -32,9 +27,8 @@ namespace JupiterToysRestSharpProject.API
                     .Find(x => x.Id == Int32.Parse(toyId));
         }
 
-        public string PerformDeleteToyOperation(String toyId)
-        {
-            ArgumentNullException.ThrowIfNull(toyId);
+        public string PerformDeleteToyOperation(String toyId) {
+            ExceptionHandler.CheckNullArgument(new List<dynamic> { toyId });
             var restClient = SetUrl(Config.readFromPropertiesFile("baseurl"));
             var restRequest = RequestOperation<Toy>(Request.DELETE, $"/toy/{toyId}", null, null);
             var restResponse = GetResponse(restClient, restRequest);

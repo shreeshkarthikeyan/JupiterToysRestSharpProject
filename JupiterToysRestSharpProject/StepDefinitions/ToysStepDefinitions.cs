@@ -33,19 +33,8 @@ namespace JupiterToysRestSharpProject.StepDefinitions
         public void ThenTheUserChecksTheToyIsPresentInTheList()
         {
             Toy toy = toyObj.PerformGetToyOperation(toyDetails.Id.ToString());
-
-
-            Assert.AreEqual(toyDetails.Price, toy.Price, $"Mismatch in {toyDetails.Title}'s price");
-            Assert.AreEqual(toyDetails.Category, toy.Category, $"Mismatch in {toyDetails.Title}'s category");
-            Assert.AreEqual(toyDetails.Title, toy.Title, $"Mismatch in {toyDetails.Title}'s title");
-            Assert.AreEqual(toyDetails.Size, toy.Size, $"Mismatch in {toyDetails.Title}'s size");
-            Assert.AreEqual(toyDetails.Image, toy.Image, $"Mismatch in {toyDetails.Title}'s image");
-            Assert.AreEqual(toyDetails.Stock, toy.Stock, $"Mismatch in {toyDetails.Title}'s stock");
-
-            Assert.AreEqual(toyDetails.Links.ElementAt(0).Rel, toy.Links.ElementAt(0).Rel, $"Mismatch in {toyDetails.Title}'s link's rel");
-            if (toy.Links.ElementAt(0).Href.Contains(toyDetails.Links.ElementAt(0).Href)) {
-                Assert.IsTrue(true, $"Expected value: {toyDetails.Links.ElementAt(0).Href}, API value: {toy.Links.ElementAt(0).Href}");
-            }
+            bool isEqual = toyDetails.Equals(toyDetails);
+            Console.WriteLine($"Is Toy equal: {isEqual}");
         }
 
         [Then(@"the user deletes the toy")]

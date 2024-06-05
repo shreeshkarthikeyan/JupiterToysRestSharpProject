@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace JupiterToysRestSharpProject.Model
 {
-    public class Link
+    public class Link : IEquatable<Link>
     {
         [JsonProperty("rel")]
         public string Rel { get; set; }
@@ -29,5 +29,27 @@ namespace JupiterToysRestSharpProject.Model
         public string Profile { get; set; }
         [JsonProperty("name")]
         public string Name { get; set; }
+
+        public bool Equals(Link other)
+        {
+            if(other == null)
+                return false;
+
+            return Rel == other.Rel &&
+                Href == other.Href &&
+                Hreflang == other.Hreflang &&
+                Media == other.Media &&
+                Title == other.Title &&
+                Image == other.Image &&
+                Type == other.Type &&
+                Deprecation == other.Deprecation &&
+                Profile == other.Profile &&
+                Name == other.Name;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as Link);
+        }
     }
 }
