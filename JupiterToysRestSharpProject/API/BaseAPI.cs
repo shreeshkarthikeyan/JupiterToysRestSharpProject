@@ -64,8 +64,8 @@ namespace JupiterToysRestSharpProject.API
 
         public string GetContent(RestResponse restResponse) {
             ExceptionHandler.CheckNullArgument(new List<dynamic> { restResponse });
-            if (restResponse.StatusCode == HttpStatusCode.BadRequest)
-                throw new Exception("Could not fetch the right response");
+            //if (restResponse.StatusCode == HttpStatusCode.BadRequest)
+            //    throw new Exception("Could not fetch the right response");
 
             return restResponse.Content!;
         }

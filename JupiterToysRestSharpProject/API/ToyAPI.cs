@@ -1,6 +1,8 @@
 ﻿using JupiterToysRestSharpProject.Model;
 using JupiterToysRestSharpProject.Support;
 using Newtonsoft.Json.Linq;
+using RestSharp;
+using System.Transactions;
 
 namespace JupiterToysRestSharpProject.API
 {
@@ -27,7 +29,7 @@ namespace JupiterToysRestSharpProject.API
                     .Find(x => x.Id == Int32.Parse(toyId));
         }
 
-        public string PerformDeleteToyOperation(String toyId) {
+        public string PerformDeleteToyOperation(string toyId) {
             ExceptionHandler.CheckNullArgument(new List<dynamic> { toyId });
             var restClient = SetUrl(Config.readFromPropertiesFile("baseurl"));
             var restRequest = RequestOperation<Toy>(Request.DELETE, $"/toy/{toyId}", null, null);
@@ -35,6 +37,16 @@ namespace JupiterToysRestSharpProject.API
             Console.WriteLine($"Delete Toy Response --> {GetContent(restResponse)}");
             dynamic data = JObject.Parse(GetContent(restResponse));
             return data.message;
+        }
+
+        public void UpdateToyStock(string toyId, Toy updateStockCount)
+        {
+            ExceptionHandler.CheckNullArgument(new List<dynamic> { toyId, updateStockCount });
+            var restClient = SetUrl(Config.readFromPropertiesFile("baseurl"));
+            Console.WriteLine(PerformGetToyOperation(toyId));
+            var restRequest = RequestOperation<Toy>(Request.PATCH, $"/toy/{toyId}", payload: updateStockCount, null);
+            var restResponse = GetResponse(restClient, restRequest);
+            Console.WriteLine($"Update Toy Stock Response --> {GetContent(restResponse)}");
         }
     }
 }

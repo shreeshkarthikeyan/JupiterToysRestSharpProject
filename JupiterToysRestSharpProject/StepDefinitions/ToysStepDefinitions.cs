@@ -11,47 +11,62 @@ namespace JupiterToysRestSharpProject.StepDefinitions
     {
         ToyAPI toyObj;
         UserAPI userObj;
-        Toy toyDetails;
-        Customer customerDetails;
-        public ToysStepDefinitions(ToyAPI toyObj, UserAPI userObj)
+        ScenarioContext scenarioContext;
+        FeatureContext featureContext;
+        public ToysStepDefinitions(ToyAPI toyObj, UserAPI userObj, ScenarioContext scenarioContext, FeatureContext featureContext)
         {
             this.toyObj = toyObj;
             this.userObj = userObj;
+            this.scenarioContext = scenarioContext;
+            this.featureContext = featureContext;
         }
         [Given(@"the user creates a new toy")]
         public void GivenTheUserCreatesANewToy(Table table)
         {
-            toyDetails = table.CreateInstance<Toy>();
+            var toyDetails = table.CreateInstance<Toy>();
             toyDetails.Links = new List<Link> { new Link { } };
             var toyId = toyObj.PerformCreateToyOperation(toyDetails);
             toyDetails.Id = Int32.Parse(toyId);
             toyDetails.Links.ElementAt(0).Rel = "self";
             toyDetails.Links.ElementAt(0).Href = $"{Config.readFromPropertiesFile("baseurl")}/toy/{toyId}";
+            featureContext.Add("Toy", toyDetails);
         }
+
+        [Given(@"the user updates the stock of the toy to zero")]
+        public void GivenTheUserUpdatesTheStockOfTheToyToZero()
+        {
+            Toy updateStockCount = new Toy
+            {
+                Stock = 2
+            };
+            toyObj.UpdateToyStock("3257", updateStockCount);
+        }
+
 
         [Then(@"the user checks the toy is present in the list")]
         public void ThenTheUserChecksTheToyIsPresentInTheList()
         {
-            Toy toy = toyObj.PerformGetToyOperation(toyDetails.Id.ToString());
-            bool isEqual = toyDetails.Equals(toyDetails);
+            var sctoy = featureContext.Get<Toy>("Toy");
+            Console.WriteLine($"Scenario Context: {sctoy.Id}");
+            Toy toy = toyObj.PerformGetToyOperation(featureContext.Get<Toy>("Toy").Id.ToString());
+            bool isEqual = featureContext.Get<Toy>("Toy").Equals(toy);
             Console.WriteLine($"Is Toy equal: {isEqual}");
         }
 
         [Then(@"the user deletes the toy")]
         public void ThenTheUserDeletesTheToy()
         {
-            var expectedText = $"Toy with id {toyDetails.Id} deleted successfully";
-            //toyObj.PerformDeleteToyOperation(toyId);
-            Assert.AreEqual(expectedText, toyObj.PerformDeleteToyOperation(toyDetails.Id.ToString()), "Delete operation failed");
+            var expectedText = $"Toy with id {featureContext.Get<Toy>("Toy").Id} deleted successfully";
+            Assert.AreEqual(expectedText, toyObj.PerformDeleteToyOperation(featureContext.Get<Toy>("Toy").Id.ToString()), "Delete operation failed");
         }
 
         [Given(@"the user creates a customer account")]
         public void GivenTheUserCreatesACustomerAccount()
         {
-            customerDetails = new Customer()
+            var customerDetails = new Customer()
             {
                 Id = 0,
-                Username = "FitzShield@gmail",
+                Username = "FitzShield1@gmail",
                 Firstname = "Fitz",
                 Lastname = "Patrick",
                 Gender = "Male",
@@ -74,6 +89,8 @@ namespace JupiterToysRestSharpProject.StepDefinitions
             };
             var customerId = userObj.performCreateUserOperation(customerDetails);
             customerDetails.Id = Int32.Parse(customerId);
+            scenarioContext.Add("Customer", customerDetails);
+            featureContext.Add("Customer", customerDetails);
         }
 
         [Then(@"the user adds toys to the cart")]
@@ -84,19 +101,12 @@ namespace JupiterToysRestSharpProject.StepDefinitions
                 new TransactionItem
                 {
                     Id = 0,
-                    ToyDetails = toyObj.PerformGetToyOperation("2795"),
-                    NumberOfToys = 2,
-                    Status = "OK"
-                },
-                new TransactionItem
-                {
-                    Id = 0,
-                    ToyDetails = toyObj.PerformGetToyOperation("2455"),
+                    ToyDetails = toyObj.PerformGetToyOperation(featureContext.Get<Toy>("Toy").Id.ToString()), // 
                     NumberOfToys = 2,
                     Status = "OK"
                 }
             };
-            customerDetails.TransactionHistory = new List<TransactionHistory>
+            scenarioContext.Get<Customer>("Customer").TransactionHistory = new List<TransactionHistory>
             {
                 new TransactionHistory
                 {
@@ -107,11 +117,11 @@ namespace JupiterToysRestSharpProject.StepDefinitions
                     OrderNumber = ""
                 }
             };
-            var list = userObj.addToysToCartOperation(customerDetails.Id.ToString(), customerDetails.TransactionHistory.ElementAt(0));
+            var list = userObj.addToysToCartOperation(scenarioContext.Get<Customer>("Customer").Id.ToString(), scenarioContext.Get<Customer>("Customer").TransactionHistory.ElementAt(0));
             var transactionId = list.Find(x => x.Contains("Transaction Id")).Split("->")[1].Trim();
-            customerDetails.TransactionHistory.ElementAt(0).Id = Int32.Parse(transactionId);
+            scenarioContext.Get<Customer>("Customer").TransactionHistory.ElementAt(0).Id = Int32.Parse(transactionId);
             var orderNumber = list.Find(x => x.Contains("Order Number")).Split("->")[1].Trim();
-            customerDetails.TransactionHistory.ElementAt(0).OrderNumber = orderNumber;
+            scenarioContext.Get<Customer>("Customer").TransactionHistory.ElementAt(0).OrderNumber = orderNumber;
         }
 
         [Then(@"the user updates the transaction details")]
@@ -121,7 +131,16 @@ namespace JupiterToysRestSharpProject.StepDefinitions
             {
                 PaymentStatus = "Successful"
             };
-            userObj.updatePaymentStatus(customerDetails.TransactionHistory.ElementAt(0).Id.ToString(), paymentStatusUpdate);
+            userObj.UpdatePaymentStatus(scenarioContext.Get<Customer>("Customer").TransactionHistory.ElementAt(0).Id.ToString(), paymentStatusUpdate);
+            
         }
+
+        [Given(@"the user deletes the customer account")]
+        public void GivenTheUserDeletesTheCustomerAccount()
+        {
+            if(!userObj.DeleteCustomer(featureContext.Get<Customer>("Customer").Id.ToString()).Equals("true"))
+                throw new Exception("Delete customer operation failed");
+        }
+
     }
 }
