@@ -207,6 +207,9 @@ this.ScenarioInitialize(scenarioInfo);
 #line 25
  testRunner.Given("the user deletes the customer account", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
+#line 26
+ testRunner.And("the user updates the stock of the toy to zero", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
 #line 27
  testRunner.Then("the user deletes the toy", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden

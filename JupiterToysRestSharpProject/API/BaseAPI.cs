@@ -1,15 +1,8 @@
-﻿using Gherkin;
-using JupiterToysRestSharpProject.Support;
+﻿using JupiterToysRestSharpProject.Support;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using NUnit.Framework;
 using RestSharp;
 using RestSharp.Authenticators.OAuth2;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Net;
-using System.Security.Policy;
 
 namespace JupiterToysRestSharpProject.API
 {
@@ -50,10 +43,19 @@ namespace JupiterToysRestSharpProject.API
                 Request.DELETE => new RestRequest(endpoint, Method.Delete),
                 Request.PATCH => new RestRequest(endpoint, Method.Patch),
             };
+
             if (headers != null)
                 restRequest.AddHeaders(headers);
 
-            restRequest.AddJsonBody(JsonConvert.SerializeObject(payload));
+            //restRequest.AddJsonBody(JsonConvert.SerializeObject(payload));
+            if (payload != null)
+            {
+                if (payload.GetType() == typeof(string)) {
+                    restRequest.AddParameter("application/json", payload, ParameterType.RequestBody);
+                } else {
+                    restRequest.AddParameter("application/json", JsonConvert.SerializeObject(payload), ParameterType.RequestBody);
+                }
+            }
             return restRequest;
         }
 
@@ -64,8 +66,8 @@ namespace JupiterToysRestSharpProject.API
 
         public string GetContent(RestResponse restResponse) {
             ExceptionHandler.CheckNullArgument(new List<dynamic> { restResponse });
-            //if (restResponse.StatusCode == HttpStatusCode.BadRequest)
-            //    throw new Exception("Could not fetch the right response");
+            if (restResponse.StatusCode == HttpStatusCode.BadRequest)
+                throw new Exception("Could not fetch the response");
 
             return restResponse.Content!;
         }

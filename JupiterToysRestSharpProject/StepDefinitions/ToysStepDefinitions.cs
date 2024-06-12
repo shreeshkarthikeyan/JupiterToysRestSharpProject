@@ -1,6 +1,7 @@
 using JupiterToysRestSharpProject.API;
 using JupiterToysRestSharpProject.Model;
 using JupiterToysRestSharpProject.Support;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using TechTalk.SpecFlow.Assist;
 
@@ -35,11 +36,14 @@ namespace JupiterToysRestSharpProject.StepDefinitions
         [Given(@"the user updates the stock of the toy to zero")]
         public void GivenTheUserUpdatesTheStockOfTheToyToZero()
         {
-            Toy updateStockCount = new Toy
+            /*Toy updateStockCount = new Toy
             {
-                Stock = 2
-            };
-            toyObj.UpdateToyStock("3257", updateStockCount);
+                Stock = 0
+            };*/
+            string payload = @"{
+                                ""stock"" : 0
+                                }";
+            toyObj.UpdateToyStock(featureContext.Get<Toy>("Toy").Id.ToString(), payload);
         }
 
 

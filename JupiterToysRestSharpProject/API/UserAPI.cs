@@ -54,7 +54,7 @@ namespace JupiterToysRestSharpProject.API
             var restClient = SetUrl(Config.readFromPropertiesFile("customerbaseurl"));
             var restRequest = RequestOperation<Customer>(operation: Request.DELETE, endpoint: $"/customer/{customerId}", null, headers: null);
             var restResponse = GetResponse(restClient, restRequest);
-            Console.WriteLine($"Create Customer Response --> {GetContent(restResponse)}");
+            Console.WriteLine($"Delete Customer Response --> {GetContent(restResponse)}");
             return GetContent(restResponse);
 
         }

@@ -23,5 +23,5 @@ Scenario: Scenario 2 - Verify purchasing a toy from a new customer account
 @Task3
 Scenario: Scenario 3 - Verify deleting customer and toy
 	Given the user deletes the customer account
-	# And the user updates the stock of the toy to zero
+	And the user updates the stock of the toy to zero
 	Then the user deletes the toy

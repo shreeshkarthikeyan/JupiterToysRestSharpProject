@@ -39,12 +39,15 @@ namespace JupiterToysRestSharpProject.API
             return data.message;
         }
 
-        public void UpdateToyStock(string toyId, Toy updateStockCount)
+        public void UpdateToyStock(string toyId, dynamic updateStockCount)
         {
             ExceptionHandler.CheckNullArgument(new List<dynamic> { toyId, updateStockCount });
             var restClient = SetUrl(Config.readFromPropertiesFile("baseurl"));
-            Console.WriteLine(PerformGetToyOperation(toyId));
-            var restRequest = RequestOperation<Toy>(Request.PATCH, $"/toy/{toyId}", payload: updateStockCount, null);
+            Console.WriteLine($"Get toy stock: {PerformGetToyOperation(toyId).Stock}");
+            var restRequest = RequestOperation(operation: Request.PATCH, 
+                                                    endpoint: $"/toy/{toyId}", 
+                                                    payload: updateStockCount, 
+                                                    headers: null);
             var restResponse = GetResponse(restClient, restRequest);
             Console.WriteLine($"Update Toy Stock Response --> {GetContent(restResponse)}");
         }
