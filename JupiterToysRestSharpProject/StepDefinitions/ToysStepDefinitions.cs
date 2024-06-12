@@ -43,7 +43,8 @@ namespace JupiterToysRestSharpProject.StepDefinitions
             string payload = @"{
                                 ""stock"" : 0
                                 }";
-            toyObj.UpdateToyStock(featureContext.Get<Toy>("Toy").Id.ToString(), payload);
+            if(!(toyObj.UpdateToyStock(featureContext.Get<Toy>("Toy").Id.ToString(), payload) == 0))
+                throw new Exception("Update toy stock operation failed");
         }
 
 

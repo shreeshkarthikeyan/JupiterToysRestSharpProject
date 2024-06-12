@@ -39,7 +39,7 @@ namespace JupiterToysRestSharpProject.API
             return data.message;
         }
 
-        public void UpdateToyStock(string toyId, dynamic updateStockCount)
+        public int UpdateToyStock(string toyId, dynamic updateStockCount)
         {
             ExceptionHandler.CheckNullArgument(new List<dynamic> { toyId, updateStockCount });
             var restClient = SetUrl(Config.readFromPropertiesFile("baseurl"));
@@ -50,6 +50,8 @@ namespace JupiterToysRestSharpProject.API
                                                     headers: null);
             var restResponse = GetResponse(restClient, restRequest);
             Console.WriteLine($"Update Toy Stock Response --> {GetContent(restResponse)}");
+            dynamic data = JObject.Parse(GetContent(restResponse));
+            return data.stock;
         }
     }
 }
