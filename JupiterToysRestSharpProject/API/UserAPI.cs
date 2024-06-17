@@ -27,7 +27,7 @@ namespace JupiterToysRestSharpProject.API
             return data.id;
         }
 
-        public List<string> addToysToCartOperation(String customerId, TransactionHistory toysAddToCart) {
+        public List<string> addToysToCartOperation(string customerId, TransactionHistory toysAddToCart) {
             ExceptionHandler.CheckNullArgument(new List<dynamic> { customerId, toysAddToCart });
             var restClient = SetUrl(Config.readFromPropertiesFile("customerbaseurl"));
             var restRequest = RequestOperation<TransactionHistory>(operation: Request.PUT, endpoint: $"/customer/{customerId}/purchase", payload: toysAddToCart, headers: null);
@@ -40,12 +40,22 @@ namespace JupiterToysRestSharpProject.API
                                       $"Order Number -> {data.order_number}" };
         }
 
-        public void UpdatePaymentStatus(String transactionId, TransactionHistory paymentStatusUpdate) {
+        public void UpdatePaymentStatus(string transactionId, TransactionHistory paymentStatusUpdate) {
             ExceptionHandler.CheckNullArgument(new List<dynamic> { transactionId, paymentStatusUpdate });
             var restClient = SetUrl(Config.readFromPropertiesFile("customerbaseurl"));
             var restRequest = RequestOperation<TransactionHistory>(operation: Request.PATCH, endpoint: $"/transaction/{transactionId}", payload: paymentStatusUpdate, headers: null);
             var restResponse = GetResponse(restClient, restRequest);
             Console.WriteLine($"Update Payment Status Response --> {GetContent(restResponse)}");
+        }
+
+        public Customer UpdateCustomerAddress(string customerId, Customer customerDetails)
+        {
+            ExceptionHandler.CheckNullArgument(new List<dynamic> { customerId, customerDetails });
+            var restClient = SetUrl(Config.readFromPropertiesFile("customerbaseurl"));
+            var restRequest = RequestOperation<Customer>(operation: Request.PATCH, endpoint: $"/customer/{customerId}", payload: customerDetails, headers: null);
+            var restResponse = GetResponse(restClient, restRequest);
+            //Console.WriteLine($"Update Customer Address Response --> {GetContent(restResponse)}");
+            return GetContent<Customer>(restResponse);
         }
 
         public string DeleteCustomer(string customerId)

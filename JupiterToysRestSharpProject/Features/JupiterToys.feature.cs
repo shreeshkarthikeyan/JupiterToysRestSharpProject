@@ -162,13 +162,48 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
+                TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Username",
+                            "Firstname",
+                            "Lastname",
+                            "Gender",
+                            "PhoneNumber"});
+                table2.AddRow(new string[] {
+                            "FitzShield1@gmail",
+                            "Fitz",
+                            "Patrick",
+                            "Male",
+                            "0456314971"});
 #line 19
- testRunner.Given("the user creates a customer account", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("the user creates a customer account", ((string)(null)), table2, "Given ");
 #line hidden
-#line 20
- testRunner.Then("the user adds toys to the cart", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+                TechTalk.SpecFlow.Table table3 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Line1",
+                            "City",
+                            "Postcode",
+                            "State",
+                            "AddressType",
+                            "DeliveryName"});
+                table3.AddRow(new string[] {
+                            "2, Coppin Close",
+                            "Hampton Park",
+                            "3976",
+                            "VIC",
+                            "Postal",
+                            "Fitz"});
+#line 22
+ testRunner.And("the user updates the address of the customer", ((string)(null)), table3, "And ");
 #line hidden
-#line 21
+                TechTalk.SpecFlow.Table table4 = new TechTalk.SpecFlow.Table(new string[] {
+                            "ToyName",
+                            "Quantity"});
+                table4.AddRow(new string[] {
+                            "Peppa pig",
+                            "2"});
+#line 25
+ testRunner.Then("the user adds toys to the cart", ((string)(null)), table4, "Then ");
+#line hidden
+#line 28
  testRunner.And("the user updates the transaction details", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             }
@@ -184,7 +219,7 @@ this.ScenarioInitialize(scenarioInfo);
                     "Task3"};
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Scenario 3 - Verify deleting customer and toy", null, tagsOfScenario, argumentsOfScenario, this._featureTags);
-#line 24
+#line 31
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             bool isScenarioIgnored = default(bool);
@@ -204,13 +239,13 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-#line 25
+#line 32
  testRunner.Given("the user deletes the customer account", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-#line 26
+#line 33
  testRunner.And("the user updates the stock of the toy to zero", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 27
+#line 34
  testRunner.Then("the user deletes the toy", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }

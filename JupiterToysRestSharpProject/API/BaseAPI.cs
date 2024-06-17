@@ -72,10 +72,21 @@ namespace JupiterToysRestSharpProject.API
             return restResponse.Content!;
         }
 
-        public List<T> GetContent<T>(RestResponse restResponse) {
+        public T GetContent<T>(RestResponse restResponse)
+        {
             ExceptionHandler.CheckNullArgument(new List<dynamic> { restResponse });
             if (restResponse.StatusCode == HttpStatusCode.BadRequest)
-                throw new Exception("Could not fetch the right response");
+                throw new Exception("Could not fetch the response");
+
+            var content = restResponse.Content;
+            T dtoObjects = JsonConvert.DeserializeObject<T>(content);
+            return dtoObjects;
+        }
+
+        public List<T> GetListContent<T>(RestResponse restResponse) {
+            ExceptionHandler.CheckNullArgument(new List<dynamic> { restResponse });
+            if (restResponse.StatusCode == HttpStatusCode.BadRequest)
+                throw new Exception("Could not fetch the response");
 
             var content = restResponse.Content;
             List<T> dtoObjects = JsonConvert.DeserializeObject<List<T>>(content);

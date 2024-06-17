@@ -17,7 +17,14 @@ Scenario: Scenario 1 - Verify create and view toy
 @Task2
 Scenario: Scenario 2 - Verify purchasing a toy from a new customer account
 	Given the user creates a customer account
+		| Username          | Firstname | Lastname | Gender | PhoneNumber |
+		| FitzShield1@gmail | Fitz      | Patrick  | Male   | 0456314971  |
+	And the user updates the address of the customer
+		| Line1			  | City		   | Postcode | State | AddressType | DeliveryName |
+		| 2, Coppin Close | Hampton Park   | 3976     | VIC   | Postal      | Fitz         |
 	Then the user adds toys to the cart
+		| ToyName      | Quantity |
+		| Peppa pig	   | 2        |
 	And the user updates the transaction details
 
 @Task3

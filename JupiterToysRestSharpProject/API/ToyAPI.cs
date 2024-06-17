@@ -25,7 +25,7 @@ namespace JupiterToysRestSharpProject.API
             var restClient = SetUrl(Config.readFromPropertiesFile("baseurl"));
             var restRequest = RequestOperation<Toy>(Request.GET, $"/toy", null, null);
             var restResponse = GetResponse(restClient, restRequest);
-            return GetContent<Toy>(restResponse)
+            return GetListContent<Toy>(restResponse)
                     .Find(x => x.Id == Int32.Parse(toyId));
         }
 
@@ -49,9 +49,21 @@ namespace JupiterToysRestSharpProject.API
                                                     payload: updateStockCount, 
                                                     headers: null);
             var restResponse = GetResponse(restClient, restRequest);
-            Console.WriteLine($"Update Toy Stock Response --> {GetContent(restResponse)}");
-            dynamic data = JObject.Parse(GetContent(restResponse));
-            return data.stock;
+            //Console.WriteLine($"Update Toy Stock Response --> {GetContent(restResponse)}");
+            //dynamic data = JObject.Parse(GetContent(restResponse));
+            Toy responseData = GetContent<Toy>(restResponse);
+            Console.WriteLine($"Toy's stock response data after updation : {responseData.Stock}");
+            return responseData.Stock;
+        }
+
+        public Toy PerformGetToyByNameOperation(string toyName)
+        {
+            ExceptionHandler.CheckNullArgument(new List<dynamic> { toyName });
+            var restClient = SetUrl(Config.readFromPropertiesFile("baseurl"));
+            var restRequest = RequestOperation<Toy>(Request.GET, $"/toy", null, null);
+            var restResponse = GetResponse(restClient, restRequest);
+            return GetListContent<Toy>(restResponse)
+                    .Find(x => x.Title.Equals(toyName));
         }
     }
 }
